@@ -1,0 +1,6 @@
+config:
+  server:
+    port: 3500
+
+  database:
+    url: process.env.DATABASE_URL

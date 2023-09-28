@@ -1,5 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ScheduleModule } from '@nestjs/schedule';
+import { BullModule } from '@nestjs/bull';
+import { ConfigModule } from '@nestjs/config';
+
 import { DATABASE_URI } from './common/config/database.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -13,17 +18,12 @@ import { SettingsModule } from './settings/settings.module';
 import { AuthModule } from './auth/auth.module';
 import { BlogModule } from './blog/blog.module';
 import { UserService } from './user/user.service';
-import { EventEmitterModule } from '@nestjs/event-emitter';
-import { ScheduleModule } from '@nestjs/schedule';
-import { BullModule } from '@nestjs/bull';
-import { ConfigModule } from '@nestjs/config';
-
 @Module({
   imports: [
     MongooseModule.forRoot(DATABASE_URI),
     EventEmitterModule.forRoot(),
     ConfigModule.forRoot({
-      envFilePath: ['.env.development.local', '.env.development'],
+      envFilePath: ['.env.development.local', '.env.development', '.env'],
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
