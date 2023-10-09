@@ -17,7 +17,7 @@ const PostSchema = new mongoose.Schema<PostInterface>(
     description: {
       type: String,
     },
-    coverImage: {
+    image: {
       type: String,
     },
     tags: {
@@ -47,5 +47,5 @@ const PostSchema = new mongoose.Schema<PostInterface>(
   },
   { timestamps: true },
 );
-PostSchema.plugin(mongoosePaginate);
+// PostSchema.plugin(mongoosePaginate);
 export default PostSchema;

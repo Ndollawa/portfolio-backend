@@ -11,13 +11,14 @@ async function bootstrap() {
   });
   // const server = config.get('server');
   const port = process.env.PORT || 3500; //server.port;
+  app.use(CredentialsMiddleware);
   app.enableCors({
-    origin: ['*'],
+    origin: ['http://localhost:3000'],
     credentials: true,
   });
   app.use(cookieParser());
-  // app.use(new CredentialsMiddleware());
-  // app.use(ErrorHandler);
+  app.use(ErrorHandler);
+  app.enableVersioning();
   await app.listen(port);
 }
 bootstrap();

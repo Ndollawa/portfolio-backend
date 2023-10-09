@@ -1,4 +1,4 @@
-import { NestMiddleware } from '@nestjs/common';
+import { NestMiddleware, Injectable } from '@nestjs/common';
 
 import * as fs from 'fs';
 const fsPromise = fs.promises;
@@ -24,6 +24,7 @@ const logEvents = async (message: string, logName: string) => {
   }
 };
 
+@Injectable()
 class Logger implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     logEvents(`${req.method}\t${req.headers.origin}\t${req.url}`, 'reqLog.txt');

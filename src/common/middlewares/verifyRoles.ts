@@ -1,6 +1,7 @@
-import { NestMiddleware } from '@nestjs/common';
+import { NestMiddleware, Injectable } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 
+@Injectable()
 export class VerifyRoles implements NestMiddleware {
   // constructor() {
 

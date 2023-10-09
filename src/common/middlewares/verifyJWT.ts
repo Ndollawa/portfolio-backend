@@ -1,8 +1,9 @@
-import { NestMiddleware } from '@nestjs/common';
+import { NestMiddleware, Injectable } from '@nestjs/common';
 import { Response, Request, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 // require('dotenv').config();
 
+@Injectable()
 export class VerifyJwt implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const authHeader =

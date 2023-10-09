@@ -30,7 +30,7 @@ export class PostController {
   }
 
   @Post()
-  @UsePipes(PostStatusValidationPipe)
+  // @UsePipes(PostStatusValidationPipe)
   async createPost(
     @Body(ValidationPipe) createPostData: CreatePostDto,
   ): Promise<PostInterface> {

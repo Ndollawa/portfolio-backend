@@ -16,8 +16,8 @@ import { ReplyModule } from './reply/reply.module';
 import { CategoryModule } from './category/category.module';
 import { SettingsModule } from './settings/settings.module';
 import { AuthModule } from './auth/auth.module';
-import { BlogModule } from './blog/blog.module';
 import { UserService } from './user/user.service';
+import { PostModule } from './post/post.module';
 @Module({
   imports: [
     MongooseModule.forRoot(DATABASE_URI),
@@ -34,10 +34,10 @@ import { UserService } from './user/user.service';
       },
     }),
     ProjectModule,
-    BlogModule,
     UserModule,
     ServiceModule,
     CommentModule,
+    PostModule,
     ReplyModule,
     CategoryModule,
     SettingsModule,

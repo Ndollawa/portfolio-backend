@@ -10,9 +10,9 @@ export interface PostInterface extends Document {
   description: string;
   body: string;
   tags: string[];
-  coverImage: string;
+  image: string;
   category: string;
   readCount: number;
   readingTime: string;
-  status: String;
+  status: string;
 }
