@@ -9,6 +9,7 @@ export function CredentialsMiddleware(
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin as string)) {
     res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Origin', origin);
   }
   next();
 }

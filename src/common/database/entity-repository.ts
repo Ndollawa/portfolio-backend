@@ -1,5 +1,8 @@
 import { Document, FilterQuery, Model, UpdateQuery } from 'mongoose';
-import { NotFoundException } from '@nestjs/common/exceptions';
+import {
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common/exceptions';
 
 export abstract class EntityRepository<T extends Document> {
   constructor(protected readonly entityModel: Model<T>) {}
@@ -51,7 +54,14 @@ export abstract class EntityRepository<T extends Document> {
    * @returns promise with an object of @interface T
    */
   async create(createEntityData: unknown): Promise<T> {
-    return await this.entityModel.create(createEntityData);
+    try {
+      return await this.entityModel.create(createEntityData);
+    } catch (error) {
+      if (error.code === 11000)
+        throw new ConflictException({
+          message: `duplicate entry found! : ${error}`,
+        });
+    }
   }
 
   /**

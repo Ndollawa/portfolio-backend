@@ -1,6 +1,7 @@
-import { PipeTransform } from '@nestjs/common/';
+import { Injectable, PipeTransform } from '@nestjs/common/';
 
-export abstract class EnumValidationPipe implements PipeTransform {
+@Injectable()
+export class EnumValidationPipe implements PipeTransform {
   readonly allowedStatuses: any;
   constructor(allowedStatuses: any) {
     this.allowedStatuses = [...allowedStatuses];

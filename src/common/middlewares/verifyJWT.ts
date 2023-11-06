@@ -1,27 +1,31 @@
-import { NestMiddleware, Injectable } from '@nestjs/common';
+import {
+  NestMiddleware,
+  Injectable,
+  ForbiddenException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Response, Request, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-// require('dotenv').config();
+import { RequestService } from '@/modules/request.service';
 
 @Injectable()
 export class VerifyJwt implements NestMiddleware {
+  constructor(private readonly requestService: RequestService) {}
   use(req: Request, res: Response, next: NextFunction) {
     const authHeader =
-      req.headers.authorization || (req.headers.Authorization as any);
+      (req.headers.authorization as string) ||
+      (req.headers.Authorization as string);
     // console.log(req.headers.authorization)
     if (!authHeader?.startsWith('Bearer '))
-      return res.status(401).json({ message: 'Unauthorized Access' });
+      throw new UnauthorizedException('Unauthorized Access');
     const token = authHeader.split(' ')[1];
     jwt.verify(
       token,
       `${process.env.ACCESS_TOKEN_SECRET}`,
-      (err: any, options: any) => {
-        if (err) return res.status(403).json({ message: 'Access Forbidden' }); // invalid token
-
-        // req.user = options?.userInfo?.user;
-        // req.username = options?.userInfo?.username;
-        // req.email = options?.userInfo?.email;
-        // req.roles = options?.userInfo?.roles;
+      (err: any, { user }: any) => {
+        if (err) throw new ForbiddenException('Access Forbidden'); // invalid token
+        req.user = user;
+        this.requestService.setUser(user);
         next();
       },
     );

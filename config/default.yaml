@@ -1,6 +1,16 @@
-config:
-  server:
-    port: 3500
+# App Configuration
+app:
+  name:
+  version:
+  author:
 
-  database:
+jwt:
+  refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET
+  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET
+
+server:
+  port: 3500
+
+database:
+  mongoDB:
     url: process.env.DATABASE_URL
