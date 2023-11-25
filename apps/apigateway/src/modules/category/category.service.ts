@@ -19,8 +19,8 @@ export class CategoryService {
   async getCategories(
     params: Partial<CategoryInterface>,
   ): Promise<CategoryInterface[]> {
-    const user = this.requestService.getUser();
-    console.log('user:', user._id);
+    // const user = this.requestService.getUser();
+    // console.log('user:', user._id);
     let query = {};
     const { type, status } = params;
     if (status) query = { ...query, status };

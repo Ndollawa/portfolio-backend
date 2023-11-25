@@ -15,8 +15,16 @@
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-     "paths": {
-      "@/*": ["./src/*"]
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@app/common": [
+        "libs/common/src"
+      ],
+      "@app/common/*": [
+        "libs/common/src/*"
+      ]
     },
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
