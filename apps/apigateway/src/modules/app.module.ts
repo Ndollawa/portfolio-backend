@@ -1,25 +1,31 @@
 import { Module, Scope } from '@nestjs/common';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
-import { LoggingInterceptor } from '@/common/interceptors/logging.interceptor';
 import { MulterModule } from '@nestjs/platform-express/multer';
 import { MongooseModule } from '@nestjs/mongoose';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BullModule } from '@nestjs/bull';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ProjectModule } from './project';
+// import { ProjectModule } from './project';
 import { UserModule, UserService } from './user';
-import { ServiceModule } from './service';
-import { CommentModule } from './comment';
-import { ReplyModule } from './reply';
-import { CategoryModule } from './category';
-import { SettingsModule } from './settings';
+// import { ServiceModule } from './service';
+// import { CommentModule } from './comment';
+// import { ReplyModule } from './reply';
+// import { CategoryModule } from './category';
+// import { SettingsModule } from './settings';
 import { AuthModule } from './auth';
-import { PostModule } from './post';
-import { HttpExceptionFilter } from '@/common/filters/http-exception.filter';
-import { RequestService } from './request.service';
+// import { PostModule } from './post';
+import { join } from 'path';
+import {
+  LoggingInterceptor,
+  ResponseInterceptor,
+  RequestService,
+  HttpExceptionFilter,
+  AUTH_PACKAGE_NAME,
+  AUTH_SERVICE_NAME,
+  AUTH_SERVICE
+} from '@app/common';
 
 @Module({
   imports: [
@@ -31,14 +37,6 @@ import { RequestService } from './request.service';
     MulterModule.register({
       dest: './uploads',
     }),
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        // uri: configService.get('database.url'),
-        uri: configService.get('DATABASE_URL'),
-      }),
-      inject: [ConfigService],
-    }),
     EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     BullModule.forRoot({
@@ -47,19 +45,27 @@ import { RequestService } from './request.service';
         port: 6379,
       },
     }),
-    ProjectModule,
-    UserModule,
-    ServiceModule,
-    CommentModule,
-    PostModule,
-    ReplyModule,
-    CategoryModule,
-    SettingsModule,
+    ClientsModule.register([
+      {
+        name: AUTH_SERVICE,
+        transport: Transport.GRPC,
+        options: {
+          package: AUTH_PACKAGE_NAME,
+          protoPath: join(__dirname, '../../auth/auth.proto'),
+        },
+      },
+    ]),
     AuthModule,
+    UserModule,
+    // ProjectModule,
+    // ServiceModule,
+    // CommentModule,
+    // PostModule,
+    // ReplyModule,
+    // CategoryModule,
+    // SettingsModule,
   ],
-  controllers: [AppController],
   providers: [
-    AppService,
     UserService,
     RequestService,
     {
@@ -67,10 +73,15 @@ import { RequestService } from './request.service';
       scope: Scope.REQUEST,
       useClass: LoggingInterceptor,
     },
-    // {
-    //   provide: APP_FILTER,
-    //   useClass: HttpExceptionFilter,
-    // },
+    {
+      provide: APP_INTERCEPTOR,
+      scope: Scope.REQUEST,
+      useClass: ResponseInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
   ],
 })
 export class AppModule {}

@@ -17,13 +17,22 @@
     "strictBindCallApply": false,
     "paths": {
       "@/*": [
-        "./src/*"
+        "apps/*"
+      ],
+      "@app": [
+        "./"
       ],
       "@app/common": [
         "libs/common/src"
       ],
       "@app/common/*": [
         "libs/common/src/*"
+      ],
+      "@app/prisma": [
+        "libs/prisma/src"
+      ],
+      "@app/prisma/*": [
+        "libs/prisma/src/*"
       ]
     },
     "forceConsistentCasingInFileNames": false,

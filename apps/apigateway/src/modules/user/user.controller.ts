@@ -8,43 +8,36 @@ import {
   Patch,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserInterface } from './interfaces/user.interface';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto,UpdateUserDto } from './dto';
+import { User } from '@app/prisma/models';
+import { Observable } from 'rxjs';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
   @Get()
-  async getUsers(): Promise<UserInterface[]> {
-    return await this.userService.getUsers();
+  getUsers() {
+    return this.userService.findAllUsers();
   }
 
   @Get(':id')
-  async getUserById(@Param('id') id: string): Promise<UserInterface> {
-    return await this.userService.findUser(
-      { _id: id },
-      { _id: 1, password: 0, refreshToken: 0 },
-    );
+  getUser(@Param('id') id: string) {
+    return this.userService.findUser(id);
   }
 
   @Post()
-  async createUser(
-    @Body() createUserData: CreateUserDto,
-  ): Promise<UserInterface> {
-    return await this.userService.createUser(createUserData);
+  createUser(@Body() createUserData: CreateUserDto) {
+    return this.userService.create(createUserData);
   }
 
   @Patch(':id')
-  async updateUser(
-    @Param('id') id: string,
-    @Body() updateUserData: UpdateUserDto,
-  ): Promise<UserInterface> {
-    return await this.userService.updateUser(id, updateUserData);
+  updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const updateUserData = { id, data:updateUserDto};
+    return this.userService.update(updateUserData);
   }
 
   @Delete(':id')
-  async deleteUsers(@Param('id') id: string): Promise<boolean> {
-    return await this.userService.deleteUserById(id);
+  deleteUser(@Param('id') id: string) {
+    return this.userService.remove(id);
   }
 }

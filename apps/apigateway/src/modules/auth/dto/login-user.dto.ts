@@ -2,7 +2,7 @@ import { IsNotEmpty, IsString, Matches, Min } from 'class-validator';
 import {
   EMAIL_REGEX,
   USER_REGEX,
-} from '@/common/utils/constants/auth.constants';
+} from '@app/common';
 
 export class LoginUserDto {
   @IsNotEmpty()
@@ -15,4 +15,3 @@ export class LoginUserDto {
   @IsString()
   password: string;
 }
-//  @Matches(EMAIL_REGEX) ||

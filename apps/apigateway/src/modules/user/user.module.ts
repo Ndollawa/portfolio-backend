@@ -1,15 +1,28 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { ClientsModule, Transport } from '@nestjs/microservices';import { join } from 'path';
+import {
+  AUTH_PACKAGE_NAME,
+  AUTH_SERVICE_NAME,
+  AUTH_SERVICE
+} from '@app/common';
+
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-import UserSchema from './schemas/user.schema';
-import { UserRepository } from './user.repository';
-import { RequestService } from '@/modules/request.service';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'User', schema: UserSchema }])],
+  imports: [ 
+    ClientsModule.register([
+      {
+        name: AUTH_SERVICE,
+        transport: Transport.GRPC,
+        options: {
+          package: AUTH_PACKAGE_NAME,
+          protoPath: join(__dirname, '../../auth/auth.proto'),
+        },
+      },
+    ])],
+  providers:[UserService],
   controllers: [UserController],
-  providers: [UserService, UserRepository, RequestService],
-  exports: [UserService, UserRepository],
+  exports:[UserService],
 })
 export class UserModule {}

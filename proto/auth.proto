@@ -1,0 +1,475 @@
+syntax =  "proto3";
+
+package auth;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+import "utils.proto";
+
+service UserService{
+    rpc CreateUser (CreateUserDto) returns (User){}
+    rpc FindAllUsers (utils.FindAllDto) returns (Users){}
+    rpc FindUser (utils.FindOneDto) returns (User){}
+    rpc UpdateUser (utils.UpdateDto) returns (User){}
+    rpc RemoveUser (utils.FindOneDto) returns (User){}
+   // rpc QueryUsers (stream PaginationDto) returns ( stream Users){}
+
+}
+
+service AuthService{
+    rpc Login (LoginUserDto) returns (AccessToken){}
+    rpc Register (RegisterUserDto) returns (User){}
+    rpc RefreshToken (User) returns (AccessToken){}
+    rpc Logout (User) returns (User){}
+
+}
+
+
+
+message SaveUserTokenDto{
+    string id = 1;
+   repeated string refreshToken = 2;
+}
+
+
+
+message Users {
+    repeated User users = 1;
+}
+
+message CreateUserDto{
+string firstName = 1;
+string lastName = 2;
+string username = 3;
+string email = 4;
+string password = 5;
+string confirmPassword = 6;
+
+}
+
+
+message LoginUserDto{
+    string user = 1;
+    string password = 2;
+}
+
+message AccessToken {
+    string accessToken = 1;
+}
+
+message RegisterUserDto{
+    string firstName = 1;
+    string lastName = 2;
+    string username = 3;
+    string email = 4;
+    string password = 5;
+    string confirmPassword = 6;
+}
+
+
+message OnlineStatus {
+  bool status = 1;
+   string lastSeen =2;
+
+}
+
+ message Links {
+            string title = 1;
+            string url = 2;     
+    }
+
+message OtherLinks{
+    repeated Links links =1;
+}
+
+
+message SocialMedia {
+    string facebook = 1;
+    string twitter = 2;
+    string instagram = 3;
+    string github = 4;
+    string behance = 5;
+    string whatsapp = 6;
+    string thread = 7;
+    OtherLinks otherLinks = 8;
+}
+
+
+// Enums
+
+message ActiveEnum{
+enum ActiveStatus {
+  ACTIVE = 0;
+  INACTIVE = 1;
+  DELETED = 2;
+}
+}
+
+message ContentEnum{
+enum ContentStatus {
+  DRAFT = 0;
+  PUBLISHED = 1;
+  DELETED = 2;
+}
+}
+message WalletEnum{
+enum WalletType {
+  FIAT = 0;
+  CRYPTO = 1;
+  CREDIT = 2;
+  TOKEN = 3;
+}}
+
+message MessageEnum{
+enum MessageState {
+  READ = 0;
+  UNREAD = 1;
+  REMOVED = 2;
+  DELETED = 3;
+}
+}
+message ProfileEnum{
+enum ProfileStatus {
+  DISABLED = 0;
+  BANNED = 1;
+  DIACTIVATED = 2;
+  PAUSED = 3;
+  ACTIVE = 4;
+  DELETED = 5;
+}
+}
+message ProjectEnum{
+enum ProjectStatus {
+  PENDING = 0;
+  IN_PROGRESS = 1;
+  COMPLETED = 2;
+  PUBLISHED = 3;
+}
+}
+message User {
+  string id = 1;
+  string email = 2;
+  string username = 3;
+  optional string password = 4;
+  Profile profile = 5;
+  repeated Role roles = 6;
+  repeated RegisteredApp registeredApps = 7;
+  repeated RefreshToken refreshTokens = 8;
+  repeated Post posts = 9;
+  repeated Comment comments = 10;
+  repeated Conversation conversations = 11;
+  repeated Message messages = 12;
+  repeated Room rooms = 13;
+  repeated Wallet wallets = 14;
+  Portfolio portfolio = 15;
+  bool verificationStatus = 16;
+  google.protobuf.Timestamp createdAt = 17;
+  google.protobuf.Timestamp updatedAt = 18;
+}
+
+message RefreshToken {
+  string id = 1;
+  User user = 2;
+  string userId = 3;
+  string refreshToken = 4;
+  google.protobuf.Timestamp createdAt = 5;
+  google.protobuf.Timestamp updatedAt = 6;
+}
+
+message Profile {
+  string id = 1;
+  optional User user = 2;
+  string userId = 3;
+  string firstName = 4;
+  string middleName = 5;
+  string lastName = 6;
+  string phone = 7;
+  string dob = 8;
+  string gender = 9;
+  string address = 10;
+  string city = 11;
+  string state = 12;
+  string country = 13;
+  string occupation = 14;
+  string bio = 15;
+  string for = 16;
+  string image = 17;
+  auth.ProfileEnum.ProfileStatus status = 18;
+  bool authentication_2FA = 19;
+  SocialMedia socialHandles = 20;
+  google.protobuf.Timestamp createdAt = 21;
+  google.protobuf.Timestamp updatedAt = 22;
+}
+
+message App {
+  string id = 1;
+  string name = 2;
+  string appId = 3;
+  repeated RegisteredApp registeredApp = 4;
+  google.protobuf.Timestamp createdAt = 5;
+  google.protobuf.Timestamp updatedAt = 6;
+}
+
+message RegisteredApp {
+  string id = 1;
+  App app = 2;
+  bool authorized = 3;
+  google.protobuf.Timestamp authorizedDate = 4;
+  User user = 5;
+  string userId = 6;
+  string appId = 7;
+  google.protobuf.Timestamp createdAt = 8;
+  google.protobuf.Timestamp updatedAt = 9;
+}
+
+message Role {
+  string id = 1;
+  string role = 2;
+  string code = 3;
+  User user = 4;
+  string userId = 5;
+  google.protobuf.Timestamp createdAt = 6;
+  google.protobuf.Timestamp updatedAt = 7;
+}
+
+message Post {
+  string id = 1;
+  string title = 2;
+  string body = 3;
+  string description = 4;
+  string image = 5;
+  string tags = 6;
+  auth.ContentEnum.ContentStatus status = 7;
+  repeated Category categories = 8;
+  repeated Comment comments = 9;
+  repeated Attachment attachments = 10;
+  int64 read_count = 11;
+  string readingTime = 12;
+  User author = 13;
+  string authorId = 14;
+  google.protobuf.Timestamp createdAt = 15;
+  google.protobuf.Timestamp updatedAt = 16;
+}
+
+message Comment {
+  string id = 1;
+  string subject = 2;
+  auth.ContentEnum.ContentStatus status = 3;
+  string comment = 4;
+  string firstName = 5;
+  string lastName = 6;
+  string email = 7;
+  string phoneNo = 8;
+  string for = 9;
+  Comment parent = 10;
+  string parentId = 11;
+  repeated Comment children = 12;
+  User author = 13;
+  string authorId = 14;
+  string authorType = 15;
+  Post post = 16;
+  string postId = 17;
+  google.protobuf.Timestamp createdAt = 18;
+  google.protobuf.Timestamp updatedAt = 19;
+}
+
+message Category {
+  string id = 1;
+  string name = 2;
+  auth.ContentEnum.ContentStatus status = 3;
+  string type = 4;
+  Category parent = 5;
+  string parentId = 6;
+  repeated Category children = 7;
+  Post post = 8;
+  string postId = 9;
+  google.protobuf.Timestamp createdAt = 10;
+  google.protobuf.Timestamp updatedAt = 11;
+}
+
+message Attachment {
+  string id = 1;
+  string fileName = 2;
+  string fileType = 3;
+  string fileUrl = 4;
+  string for = 5;
+  Post post = 6;
+  Project project = 7;
+  Service service = 8;
+  Message message = 9;
+  string postId = 10;
+  string serviceId = 11;
+  string projectId = 12;
+  string messageId = 13;
+  google.protobuf.Timestamp createdAt = 14;
+  google.protobuf.Timestamp updatedAt = 15;
+}
+
+message Portfolio {
+  string id = 1;
+  string firstName = 2;
+  string middleName = 3;
+  string lastName = 4;
+  string phone = 5;
+  string email = 6;
+  string dob = 7;
+  string gender = 8;
+  string address = 9;
+  string city = 10;
+  string state = 11;
+  string country = 12;
+  string occupation = 13;
+  string bio = 14;
+  string image = 15;
+  User user = 16;
+  string userId = 17;
+  repeated Education educations = 18;
+  repeated Experience experiences = 19;
+  repeated Certification certifications = 20;
+  repeated Testimonial testimonials = 21;
+  repeated Project projects = 22;
+  repeated Service services = 23;
+  google.protobuf.Timestamp createdAt = 24;
+  google.protobuf.Timestamp updatedAt = 25;
+}
+
+message Education {
+  string id = 1;
+  string institution = 2;
+  string award = 3;
+  string overview = 4;
+  bool currentlyActive = 5;
+  google.protobuf.Timestamp startDate = 6;
+  google.protobuf.Timestamp endDate = 7;
+  Portfolio portfolio = 8;
+  string portfolioId = 9;
+  auth.ActiveEnum.ActiveStatus status = 10;
+  google.protobuf.Timestamp createdAt = 11;
+  google.protobuf.Timestamp updatedAt = 12;
+}
+
+message Experience {
+  string id = 1;
+  string position = 2;
+  string overview = 3;
+  bool currentlyActive = 4;
+  google.protobuf.Timestamp startDate = 5;
+  google.protobuf.Timestamp endDate = 6;
+  auth.ActiveEnum.ActiveStatus status = 7;
+  Portfolio portfolio = 8;
+  string portfolioId = 9;
+  google.protobuf.Timestamp createdAt = 10;
+  google.protobuf.Timestamp updatedAt = 11;
+}
+
+message Certification {
+  string id = 1;
+  string image = 2;
+  string issued_by = 3;
+  string validThrough = 4;
+  string refNo = 5;
+  auth.ActiveEnum.ActiveStatus status = 6;
+  Portfolio portfolio = 7;
+  string portfolioId = 8;
+  google.protobuf.Timestamp createdAt = 9;
+  google.protobuf.Timestamp updatedAt = 10;
+}
+
+message Testimonial {
+  string id = 1;
+  string author = 2;
+  string subject = 3;
+  string body = 4;
+  string for = 5;
+  auth.ActiveEnum.ActiveStatus status = 6;
+  Portfolio portfolio = 7;
+  string portfolioId = 8;
+  google.protobuf.Timestamp createdAt = 9;
+  google.protobuf.Timestamp updatedAt = 10;
+}
+
+message Project {
+  string id = 1;
+  string title = 2;
+  string body = 3;
+  string description = 4;
+  string image = 5;
+  string tags = 6;
+  auth.ProjectEnum.ProjectStatus status = 7;
+  repeated Attachment attachments = 8;
+  Portfolio portfolio = 9;
+  string portfolioId = 10;
+  google.protobuf.Timestamp createdAt = 11;
+  google.protobuf.Timestamp updatedAt = 12;
+}
+
+message Service {
+  string id = 1;
+  string title = 2;
+  string body = 3;
+  string description = 4;
+  string icon = 5;
+  string image = 6;
+  string tags = 7;
+  string for = 8;
+  auth.ContentEnum.ContentStatus status = 9;
+  repeated Attachment attachments = 10;
+  Portfolio portfolio = 11;
+  string portfolioId = 12;
+  google.protobuf.Timestamp createdAt = 13;
+  google.protobuf.Timestamp updatedAt = 14;
+}
+
+message Faq {
+  string id = 1;
+  string for = 2;
+  string title = 3;
+  string body = 4;
+  auth.ActiveEnum.ActiveStatus status = 5;
+  google.protobuf.Timestamp createdAt = 6;
+  google.protobuf.Timestamp updatedAt = 7;
+}
+
+message Message {
+  string id = 1;
+  Conversation conversation = 2;
+  string conversationId = 3;
+  User sender = 4;
+  string senderId = 5;
+  string message = 6;
+  auth.MessageEnum.MessageState state = 7;
+  auth.ActiveEnum.ActiveStatus status = 8;
+  repeated Attachment attachments = 9;
+  google.protobuf.Timestamp createdAt = 10;
+  google.protobuf.Timestamp updatedAt = 11;
+}
+
+message Conversation {
+  string id = 1;
+  repeated User members = 2;
+  repeated Message messages = 3;
+  google.protobuf.Timestamp createdAt = 4;
+  google.protobuf.Timestamp updatedAt = 5;
+}
+
+message Room {
+  string id = 1;
+  repeated User members = 2;
+  string title = 3;
+  string description = 4;
+  string image = 5;
+  auth.ActiveEnum.ActiveStatus status = 6;
+  google.protobuf.Timestamp createdAt = 7;
+  google.protobuf.Timestamp updatedAt = 8;
+}
+
+message Wallet {
+  string id = 1;
+  User user = 2;
+  string userId = 3;
+  int32 balance = 4;
+  auth.WalletEnum.WalletType type = 5;
+  google.protobuf.Any currency = 6;
+  google.protobuf.Timestamp createdAt = 7;
+  google.protobuf.Timestamp updatedAt = 8;
+}

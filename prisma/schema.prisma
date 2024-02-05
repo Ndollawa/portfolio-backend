@@ -1,0 +1,390 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum ActiveStatus {
+  ACTIVE
+  INACTIVE
+  DELETED
+}
+
+enum CommentStatus {
+  DRAFT
+  PUBLISHED
+  DELETED
+}
+
+enum WalletType {
+  FIAT
+  CRYPTO
+  CREDIT
+  TOKEN
+}
+
+enum MessageState {
+  READ
+  UNREAD
+  REMOVED
+  DELETED
+}
+
+enum ProfileStatus {
+  DISABLED
+  BANNED
+  DIACTIVATED
+  PAUSED
+  ACTIVE
+  DELETED
+}
+
+enum ProjectStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  PUBLISHED
+}
+
+model User {
+  id                 String          @id @default(uuid())
+  email              String          @unique
+  username           String          @unique
+  password           String
+  profile            Profile?
+  roles               Role[]
+  registeredApps      RegisteredApp[]
+  refreshTokens       RefreshToken[]
+  posts              Post[]
+  comments           Comment[]
+  conversations      Conversation[]
+  messages           Message[]
+  rooms              Room[]
+  wallets            Wallet[]
+  portfolio          Portfolio?
+  verificationStatus Boolean
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt()
+}
+
+model RefreshToken {
+  id           String   @id @default(uuid())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String   @unique
+  refreshToken String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt()
+}
+
+model Profile {
+  id         String        @id @default(uuid())
+  user       User          @relation(fields: [userId], references: [id])
+  userId     String        @unique
+  firstName  String        @db.VarChar(80)
+  middleName String?        @db.VarChar(80)
+  lastName   String?        @db.VarChar(80)
+  phone      String?
+  dob        String?
+  gender     String?
+  address    String?
+  city       String?
+  state      String?
+  country    String?
+  occupation String?
+  bio        String?
+  for        String?
+  image      String?
+  authentication_2FA      Boolean  @default(false)
+  status     ProfileStatus @default(ACTIVE)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt()
+  // @@unique([userId]) 
+}
+
+model App {
+  id            String          @id @default(uuid())
+  name          String          @unique
+  appId         String          @unique
+  registeredApp RegisteredApp[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt()
+}
+
+model RegisteredApp {
+  id             String   @id @default(uuid())
+  app            App      @relation(fields: [appId], references: [id])
+  authorized     Boolean  @default(false)
+  authorizedDate DateTime
+  user           User     @relation(fields: [userId], references: [id])
+  userId         String   @unique
+  appId          String   @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt()
+}
+
+model Role {
+  id        String   @id @default(uuid())
+  role      String   @db.VarChar(80)
+  code      String    
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+}
+
+model Post {
+  id          String       @id @default(uuid())
+  title       String       @unique
+  body        String       @db.Text
+  description String       @db.Text
+  image       String
+  tags        String
+  status      PostStatus   @default(PUBLISHED)
+  categories  Category[]
+  comments    Comment[]
+  attachments Attachment[]
+  readCount   BigInt
+  readingTime String
+  author      User         @relation(fields: [authorId], references: [id])
+  authorId    String       @unique
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt()
+}
+
+model Comment {
+  id         String        @id @default(uuid())
+  subject    String
+  status     CommentStatus @default(PUBLISHED)
+  comment    String
+  firstName  String
+  lastName   String
+  email      String
+  phoneNo    String
+  for        String
+  parent     Comment       @relation("commentToComment", fields: [parentId], references: [id])
+  parentId   String        @unique
+  children   Comment[]     @relation("commentToComment")
+  author     User          @relation(fields: [authorId], references: [id])
+  authorId   String        @unique
+  authorType String
+  post       Post          @relation(fields: [postId], references: [id])
+  postId     String        @unique
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt()
+}
+
+model Category {
+  id        String     @id @default(uuid())
+  name      String
+  status    PostStatus @default(PUBLISHED)
+  type      String
+  parent    Category   @relation("categoryToCategory", fields: [parentId], references: [id])
+  parentId  String     @unique
+  children  Category[] @relation("categoryToCategory")
+  // user      User       @relation(fields: [userId], references: [id])
+  // userId    String     @unique
+  post      Post?      @relation(fields: [postId], references: [id])
+  postId    String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt()
+}
+
+model Attachment {
+  id        String   @id @default(uuid())
+  fileName  String
+  fileType  String
+  fileUrl   String
+  for       String
+  post      Post?    @relation(fields: [postId], references: [id])
+  project   Project? @relation(fields: [projectId], references: [id])
+  service   Service? @relation(fields: [serviceId], references: [id])
+  message   Message? @relation(fields: [messageId], references: [id])
+  postId    String
+  serviceId String
+  projectId String
+  messageId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+}
+
+model Portfolio {
+  id             String          @id @default(uuid())
+  firstName      String          @db.VarChar(80)
+  middleName     String          @db.VarChar(80)
+  lastName       String          @db.VarChar(80)
+  phone          String
+  email          String          @unique
+  dob            String
+  gender         String
+  address        String
+  city           String
+  state          String
+  country        String
+  occupation     String
+  bio            String
+  image          String
+  user           User            @relation(fields: [userId], references: [id])
+  userId         String          @unique
+  educations     Education[]
+  experiences    Experience[]
+  certifications Certification[]
+  testimonial    Testimonial[]
+  projects       Project[]
+  services       Service[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt()
+}
+
+model Education {
+  id              String       @id @default(uuid())
+  institution     String
+  award           String
+  overview        String       @db.Text
+  currentlyActive Boolean
+  startDate       DateTime
+  endDate         DateTime
+  portfolio       Portfolio    @relation(fields: [portfolioId], references: [id])
+  portfolioId     String       @unique
+  status          ActiveStatus @default(ACTIVE)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt()
+}
+
+model Experience {
+  id              String       @id @default(uuid())
+  position        String
+  overview        String       @db.Text
+  currentlyActive Boolean
+  startDate       DateTime
+  endDate         DateTime
+  status          ActiveStatus @default(ACTIVE)
+  portfolio       Portfolio    @relation(fields: [portfolioId], references: [id])
+  portfolioId     String       @unique
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt()
+}
+
+model Certification {
+  id           String       @id @default(uuid())
+  image        String
+  issuedBy     String
+  validThrough String
+  refNo        String
+  status       ActiveStatus @default(ACTIVE)
+  portfolio    Portfolio    @relation(fields: [portfolioId], references: [id])
+  portfolioId  String       @unique
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt()
+}
+
+model Testimonial {
+  id          String       @id @default(uuid())
+  author      String
+  subject     String
+  body        String
+  for         String
+  status      ActiveStatus @default(ACTIVE)
+  portfolio   Portfolio    @relation(fields: [portfolioId], references: [id])
+  portfolioId String       @unique
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt()
+}
+
+model Project {
+  id          String        @id @default(uuid())
+  title       String        @unique
+  body        String        @db.Text
+  description String        @db.Text
+  image       String
+  tags        String
+  status      ProjectStatus @default(COMPLETED)
+  attachments Attachment[] //@relation("projectToAttachment")
+  portfolio   Portfolio     @relation(fields: [portfolioId], references: [id])
+  portfolioId String        @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+}
+
+model Service {
+  id          String       @id @default(uuid())
+  title       String       @unique
+  body        String       @db.Text
+  description String       @db.Text
+  icon        String
+  image       String
+  tags        String
+  for         String
+  status      PostStatus   @default(PUBLISHED)
+  attachments Attachment[] //@relation("serviceToAttachment")
+  portfolio   Portfolio    @relation(fields: [portfolioId], references: [id])
+  portfolioId String       @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+}
+
+model Faq {
+  id        String       @id @default(uuid())
+  for       String
+  title     String
+  body      String
+  status    ActiveStatus
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt()
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversationId String       @unique
+  sender         User         @relation(fields: [senderId], references: [id])
+  senderId       String       @unique
+  message        String       @db.Text
+  state          MessageState
+  status         ActiveStatus
+  attachments    Attachment[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt()
+}
+
+model Conversation {
+  id        String    @id @default(uuid())
+  members   User[]
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt()
+}
+
+model Room {
+  id          String       @id @default(uuid())
+  members     User[]
+  title       String
+  description String
+  image       String
+  status      ActiveStatus
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt()
+}
+
+model Wallet {
+  id        String     @id @default(uuid())
+  user      User       @relation(fields: [userId], references: [id])
+  userId    String     @unique
+  balance   Int
+  type      WalletType
+  currency  Json
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt()
+}

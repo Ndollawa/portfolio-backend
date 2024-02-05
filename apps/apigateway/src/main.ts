@@ -1,16 +1,15 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from '@/modules/app.module';
-import * as express from 'express';
 import {
   ValidationPipe,
   ValidationError,
   BadRequestException,
   // UnprocessableEntityException,
 } from '@nestjs/common';
-import * as cookieParser from 'cookie-parser';
-import { CredentialsMiddleware } from '@/common/middlewares/credentials.middleware';
-import { ErrorHandler } from '@/common/middlewares/error-handler.middleware';
 import { ConfigService } from '@nestjs/config';
+import { AppModule } from '@/apigateway/src/modules/app.module';
+import * as express from 'express';
+import * as cookieParser from 'cookie-parser';
+import {CredentialsMiddleware , ErrorHandler } from '@app/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
