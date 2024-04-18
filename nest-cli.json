@@ -6,7 +6,9 @@
   "compilerOptions": {
     "deleteOutDir": true,
     "webpack": true,
-    "tsConfigPath": "apps/apigateway/tsconfig.app.json"
+    "tsConfigPath": "apps/apigateway/tsconfig.app.json",
+    "assets": ["@app/src/communication/mailer/templates/**"],
+    "watchAssets": true
   },
   "monorepo": true,
   "root": "apps/apigateway",

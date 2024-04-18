@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { UserService } from './user.service';
+import { UserService } from './services/user.service';
 import {
   CreateUserDto,
   UpdateDto,
@@ -10,6 +10,8 @@ import {
   Users,
   UserServiceController,
   UserServiceControllerMethods,
+  transformTimestampToDate,
+  transformDateToTimestamp,
 } from '@app/common';
 // import {User} from "@app/prisma"
 
@@ -19,25 +21,37 @@ export class UserController implements UserServiceController {
   constructor(private readonly userService: UserService) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    return await this.userService.createUser(createUserDto);
+    const user = await this.userService.createUser(createUserDto);
+    return transformDateToTimestamp(user);
   }
 
   async findAllUsers(): Promise<Users> {
-    return { users: await this.userService.findAllUsers({where:{},include:{profile:true,roles:true}}) };
+    const users = await this.userService.findAllUsers({
+      where: {},
+      include: { profile: true, roles: true },
+    });
+    const transformedData = users.map((user) => transformDateToTimestamp(user));
+    return { users: transformedData };
   }
 
   async findUser(findUserDto: FindOneDto): Promise<User> {
-    return await this.userService.findUser(findUserDto);
+    return transformDateToTimestamp(
+      await this.userService.findUser(findUserDto),
+    );
   }
 
-  async updateUser(updateUserDto: UpdateDto): Promise<User> {
-    console.log(updateUserDto.data)
-    return await this.userService.updateUser(updateUserDto);
+  async updateUser(updateUserDto: UpdateDto<User>): Promise<User> {
+    return transformDateToTimestamp(
+      await this.userService.updateUser(updateUserDto),
+    );
   }
 
- async removeUser(findUserDto: FindOneDto): Promise<User> {
-    return await this.userService.removeUser(findUserDto);
+  async removeUser(findUserDto: FindOneDto): Promise<User> {
+    return transformDateToTimestamp(
+      await this.userService.removeUser(findUserDto),
+    );
   }
+
   // queryUsers(paginationDtoStream: PaginationDto):Promise<any> | Observable<any> {
   //   // return this.userService.queryUser(paginationDtoStream);
   //   return null

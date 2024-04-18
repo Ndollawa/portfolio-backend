@@ -6,6 +6,7 @@ import {
   // UnprocessableEntityException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as passport from "passport";
 import { AppModule } from '@/apigateway/src/modules/app.module';
 import * as express from 'express';
 import * as cookieParser from 'cookie-parser';
@@ -28,6 +29,7 @@ async function bootstrap() {
       },
     }),
   );
+  app.use(passport.initialize());
   app.use(express.urlencoded({ extended: true, limit: '200mb' }));
   app.use(express.json({ limit: '200mb' }));
   app.use(CredentialsMiddleware);

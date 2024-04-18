@@ -7,6 +7,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BullModule } from '@nestjs/bull';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+
 // import { ProjectModule } from './project';
 import { UserModule, UserService } from './user';
 // import { ServiceModule } from './service';

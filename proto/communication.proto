@@ -1,0 +1,89 @@
+syntax =  "proto3";
+
+package communication;
+
+/*import "google/protobuf/timestamp.proto";*/
+import  "google/protobuf/any.proto";
+import "utils.proto";
+
+
+
+message MailAttachment{
+    string type = 1;
+    string name = 2;
+    string url = 3;
+
+}
+
+message MailContext{
+    string template = 1;
+    google.protobuf.Any data = 2;
+}
+
+message CreateMailerDto{
+string name = 1;
+string content = 2;
+string context = 3;
+optional string template = 4;
+}
+
+
+message ToMultipleList {
+  repeated string to_multiple = 1;
+}
+
+message MultipleAttachment {
+repeated MailAttachment multiple_attachment = 1;
+}
+
+message SendMailDto {
+  string from = 1;
+  oneof to {
+    string to_single = 2;
+    ToMultipleList to_multiple_list = 3;
+  }
+  string subject = 4;
+  string html = 5;
+  string template = 6;
+oneof attachments {
+    MailAttachment one_attachment = 7;
+   MultipleAttachment multiple_attachment = 8;
+  }
+}
+
+
+
+
+
+service MailerService{
+    rpc CreateTemplate (SendMailDto) returns (utils.Empty){}
+    rpc SendMail (SendMailDto) returns (utils.Empty){}
+    rpc FindTemplate (utils.Empty) returns (utils.Empty){}
+    rpc FindAllTemplates (utils.Empty) returns (utils.Empty){}
+    rpc UpdateTemplate (utils.Empty) returns (utils.Empty){}
+    rpc RemoveTemplate (utils.Empty) returns (utils.Empty){}
+   // rpc Query (stream PaginationDto) returns ( stream s){}
+
+}
+
+// service SmsService{
+//     rpc CreateMail (CreateDto) returns (utils.Empty){}
+//     rpc SendMail (utils.FindAllDto) returns (utils.Empty){}
+//     rpc MakeTemplate (utils.FindOneDto) returns (utils.Empty){}
+//     rpc UseTemplate (utils.UpdateDto) returns (utils.Empty){}
+//     rpc UpdateTemplate (utils.UpdateDto) returns (utils.Empty){}
+//     rpc RemoveTemplate (utils.FindOneDto) returns (utils.Empty){}
+//    // rpc QueryUsers (stream PaginationDto) returns ( stream Users){}
+
+// }
+
+/*service AuthService{
+    rpc ValidateUser (LoginUserDto) returns (ValidateUserResponse){}
+    rpc Login (User) returns (AccessToken){}
+    rpc Register (RegisterUserDto) returns (User){}
+    rpc RefreshToken (User) returns (AccessToken){}
+    rpc Logout (User) returns (User){}
+
+}*/
+
+

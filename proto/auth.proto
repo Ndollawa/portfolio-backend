@@ -17,10 +17,16 @@ service UserService{
 }
 
 service AuthService{
-    rpc Login (LoginUserDto) returns (AccessToken){}
+    rpc ValidateUser (LoginUserDto) returns (User){}
+    rpc Login (User) returns (Tokens){}
     rpc Register (RegisterUserDto) returns (User){}
-    rpc RefreshToken (User) returns (AccessToken){}
     rpc Logout (User) returns (User){}
+    rpc RefreshUserToken (User) returns (Tokens){}
+    rpc VerifyToken (RefreshTokenQueryDto) returns (utils.Empty){}
+    rpc FindRefreshToken (RefreshTokenQueryDto) returns (RefreshToken){}
+    rpc SaveUserRefreshToken (CreateRefreshTokenDto) returns (RefreshToken){}
+    rpc RemoveRefreshToken (RefreshTokenQueryDto) returns (RefreshToken){}
+    rpc RemoveManyRefreshToken (RefreshTokenQueryDto) returns (RefreshTokens){}
 
 }
 
@@ -31,10 +37,12 @@ message SaveUserTokenDto{
    repeated string refreshToken = 2;
 }
 
-
-
 message Users {
     repeated User users = 1;
+}
+
+message RefreshTokens {
+    repeated RefreshToken refreshTokens = 1;
 }
 
 message CreateUserDto{
@@ -47,14 +55,45 @@ string confirmPassword = 6;
 
 }
 
+message CreateProfileDto{
+ string userId = 1;
+// string lastName = 2;
+// string username = 3;
+//  email = 4;
+
+}
+
+
+message CreateRefreshTokenDto{
+string userId = 1;
+string refreshToken = 2;
+
+}
+
+message RefreshTokenQueryDto{
+  oneof query{
+    string id = 1;
+    string refreshToken = 2;
+    string userId = 3;
+  }
+}
 
 message LoginUserDto{
-    string user = 1;
+    string username = 1;
     string password = 2;
+}
+
+message Tokens {
+    string accessToken = 1;
+    string refreshToken = 2;
 }
 
 message AccessToken {
     string accessToken = 1;
+}
+
+message RefeshTokenResult {
+    string refeshToken = 1;
 }
 
 message RegisterUserDto{
@@ -169,7 +208,7 @@ message User {
 
 message RefreshToken {
   string id = 1;
-  User user = 2;
+  optional User user = 2;
   string userId = 3;
   string refreshToken = 4;
   google.protobuf.Timestamp createdAt = 5;
@@ -465,7 +504,7 @@ message Room {
 
 message Wallet {
   string id = 1;
-  User user = 2;
+  optional User user = 2;
   string userId = 3;
   int32 balance = 4;
   auth.WalletEnum.WalletType type = 5;

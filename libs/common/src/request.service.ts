@@ -4,11 +4,13 @@ import { User } from '@app/common';
 @Injectable({ scope: Scope.REQUEST })
 export class RequestService {
   private user: User;
+  constructor(){
+  }
 
-  setUser(user: User) {
-    this.user = user;
-  }
-  getUser() {
-    return this.user;
-  }
+  public  setUser(user: User) {
+      this.user = user;
+    }
+  public  getUser() {
+      return this.user;
+    }
 }

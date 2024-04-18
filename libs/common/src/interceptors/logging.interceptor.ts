@@ -16,7 +16,9 @@ export class LoggingInterceptor implements NestInterceptor {
       const method = call?.call?.getFullMethodName() || 'UNKNOWN_METHOD';
       const ip = call?.call?.getPeer() || 'UNKNOWN_IP';
 
-      this.logger.log(`Request received: ${method} from ${ip}`);
+      // Extracted RPC Controller and Method
+      const [rpcController, rpcMethod] = method.split('/');
+      this.logger.log(`Request received: RPC Controller - ${rpcController}, Method - ${rpcMethod}, from ${ip}`);
     } else {
       const request = context.switchToHttp().getRequest();
       const { ip, method, path: url } = request;

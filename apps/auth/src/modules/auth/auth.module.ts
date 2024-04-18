@@ -1,24 +1,20 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { MulterModule } from '@nestjs/platform-express/multer';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { BullModule } from '@nestjs/bull';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtModule} from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { PrismaModule } from '@app/prisma';
 import {
   LoggingInterceptor,
-  ResponseInterceptor,
+  // ResponseInterceptor,
   RequestService,
-  HttpExceptionFilter,
-  AUTH_PACKAGE_NAME,
-  AUTH_SERVICE_NAME,
-  AUTH_SERVICE
 } from '@app/common';
 
-import { UserService,UserModule ,UserRepository } from '../user';
-import { JwtStrategy,LocalStrategy, JwtRefreshStrategy } from './strategies';
+import { UserService, UserModule, UserRepository, RefreshTokenService, RefreshTokenRepository } from '../user';
 
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -45,23 +41,35 @@ import { AuthService } from './auth.service';
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get('ACCESS_TOKEN_SECRET'),
-        signOptions:{expiresIn:'1800s'}
+        signOptions: { expiresIn: '1800s' },
       }),
-      inject:[ConfigService],
+      inject: [ConfigService],
     }),
-  PrismaModule,UserModule],
+    // ClientsModule.register([
+    //   {
+    //     name: COMMUNICTION_SERVICE,
+    //     transport: Transport.GRPC,
+    //     options: {
+    //       package: COMMUNICATION_PACKAGE_NAME,
+    //       protoPath: join(__dirname, '../../communication/communication.proto'),
+    //     },
+    //   },
+    // ]),
+    PrismaModule,
+    UserModule,
+  ],
   controllers: [AuthController],
   providers: [
     RequestService,
     UserRepository,
-    AuthService,
-    LocalStrategy,
-    JwtStrategy,
-    JwtRefreshStrategy,
     UserService,
-     {
+    RefreshTokenService,
+    RefreshTokenRepository,
+    AuthService,
+    {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
-    },],
+    },
+  ],
 })
 export class AuthModule {}

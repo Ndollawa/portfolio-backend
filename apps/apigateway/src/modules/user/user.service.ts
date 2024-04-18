@@ -1,12 +1,13 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
+// import {} from "@prisma/client";
 import {
   AUTH_SERVICE,
   USER_SERVICE_NAME,
   UpdateDto,
+  User,
   UserServiceClient
  } from '@app/common';
-// import { User } from '@app/prisma/models';
 import { CreateUserDto } from './dto';
 
 @Injectable()
@@ -30,7 +31,7 @@ export class UserService implements OnModuleInit {
     return this.userService.createUser(createUserDto);
   }
 
-  update(updateUserDto: UpdateDto) {
+  update(updateUserDto: UpdateDto<User>) {
     return this.userService.updateUser(updateUserDto);
   }
 

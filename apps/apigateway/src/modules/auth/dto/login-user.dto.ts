@@ -8,7 +8,7 @@ export class LoginUserDto {
   @IsNotEmpty()
   @IsString()
   @Matches(USER_REGEX)
-  user: string;
+  username: string;
 
   @IsNotEmpty()
   @IsNotEmpty()

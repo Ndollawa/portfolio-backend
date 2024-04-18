@@ -18,7 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/portfolio/test/jest-e2e.json",
-    "proto:generate": "protoc --experimental_allow_proto3_optional --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./ --ts_proto_opt=nestJs=true"
+    "proto:generate": "protoc --experimental_allow_proto3_optional --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=./libs/common/src/interfaces/ --ts_proto_opt=nestJs=true"
   },
   "dependencies": {
     "@apollo/gateway": "^2.5.7",
@@ -38,7 +38,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/microservices": "^10.2.10",
     "@nestjs/mongoose": "^10.0.1",
-    "@nestjs/passport": "^10.0.1",
+    "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/schedule": "^3.0.3",
     "@sendgrid/mail": "^7.7.0",

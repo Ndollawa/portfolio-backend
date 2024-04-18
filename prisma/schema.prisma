@@ -123,11 +123,11 @@ model App {
 
 model RegisteredApp {
   id             String   @id @default(uuid())
-  app            App      @relation(fields: [appId], references: [id])
   authorized     Boolean  @default(false)
-  authorizedDate DateTime
+  authorizedDate DateTime @default(now())
   user           User     @relation(fields: [userId], references: [id])
   userId         String   @unique
+  app            App      @relation(fields: [appId], references: [id])
   appId          String   @unique
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt()
@@ -387,4 +387,16 @@ model Wallet {
   currency  Json
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt()
+}
+
+model Mailer{
+  id        String     @id @default(uuid())
+  user      User       @relation(fields: [userId], references: [id])
+  userId    String     @unique
+  type      WalletType
+  template  String
+  name      String
+  data      Json
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }

@@ -7,14 +7,14 @@ import { AuthModule } from './modules/auth/auth.module';
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AuthModule,
-    { 
-      logger: ['error', 'warn', 'log', 'debug'],
+    {
       transport: Transport.GRPC,
       options: {
         protoPath: join(__dirname, '../auth.proto'),
         package:AUTH_PACKAGE_NAME,
       },
-    },);
+    },
+  );
   await app.listen();
 }
 bootstrap();

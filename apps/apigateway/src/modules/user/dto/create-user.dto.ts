@@ -44,12 +44,12 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @IsString()
-  @IsEmail(/*{
+  @IsEmail({},{
     message: `Invalid email address. Ensure that these requirements are met:\n
                 At least 10 characters (and up to 100 characters)\n
                 Must begin with letter followed by @ and a provider. eg. youremail@provider.com\n
                 Mustnend with a domain\n`,
-  }*/)
+  })
   email: string;
 
   @IsNotEmpty()

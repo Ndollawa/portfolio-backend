@@ -7,10 +7,10 @@ import {
   Post,
   Patch,
 } from '@nestjs/common';
+import { User } from '@prisma/client';
+import { Observable } from 'rxjs';
 import { UserService } from './user.service';
 import { CreateUserDto,UpdateUserDto } from './dto';
-import { User } from '@app/prisma/models';
-import { Observable } from 'rxjs';
 
 @Controller('users')
 export class UserController {
